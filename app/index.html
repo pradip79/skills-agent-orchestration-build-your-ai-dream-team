@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project Pulse</title>
+    <meta
+      name="description"
+      content="Project Pulse dashboard tracking active team initiatives and delivery health."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="dashboard" aria-labelledby="dashboard-title">
+      <header class="dashboard-header">
+        <div>
+          <p class="eyebrow">Contributor workspace</p>
+          <h1 id="dashboard-title">Project Pulse</h1>
+        </div>
+        <div class="header-metrics" aria-label="Project summary metrics">
+          <div class="metric-pill">
+            <span id="project-count" class="metric-value">0</span>
+            <span class="metric-label">active projects</span>
+          </div>
+          <div class="metric-pill">
+            <span id="team-count" class="metric-value">6</span>
+            <span class="metric-label">teams engaged</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="overview" aria-labelledby="overview-title">
+        <div>
+          <p class="section-kicker">Executive overview</p>
+          <h2 id="overview-title">Delivery health snapshot</h2>
+        </div>
+        <p class="overview-copy">
+          Progress is strongest where cross-functional handoff is clear. Follow the
+          projects below for the latest status, recent contributor updates, and
+          priority changes.
+        </p>
+      </section>
+
+      <section class="project-panel" aria-live="polite" aria-label="Project list">
+        <div id="project-grid" class="project-grid"></div>
+        <p id="data-state" class="data-state" role="status"></p>
+      </section>
+    </main>
+
+    <script>
+      const projectGrid = document.getElementById('project-grid');
+      const projectCount = document.getElementById('project-count');
+      const dataState = document.getElementById('data-state');
+
+      function statusClass(status) {
+        const normalized = status.toLowerCase();
+        if (normalized.includes('risk')) return 'status-risk';
+        if (normalized.includes('review')) return 'status-review';
+        if (normalized.includes('stable')) return 'status-stable';
+        return 'status-ontrack';
+      }
+
+      function priorityClass(priority) {
+        const normalized = priority.toLowerCase();
+        if (normalized === 'high') return 'priority-high';
+        if (normalized === 'medium') return 'priority-medium';
+        return 'priority-low';
+      }
+
+      function createProjectCard(project) {
+        const article = document.createElement('article');
+        article.className = 'project-card';
+        article.innerHTML = `
+          <div class="project-header">
+            <div>
+              <p class="project-owner">${project.owner}</p>
+              <h3>${project.name}</h3>
+            </div>
+            <span class="priority-badge ${priorityClass(project.priority)}">${project.priority}</span>
+          </div>
+
+          <dl class="project-meta">
+            <div>
+              <dt>Status</dt>
+              <dd><span class="status-badge ${statusClass(project.status)}">${project.status}</span></dd>
+            </div>
+            <div>
+              <dt>Recent activity</dt>
+              <dd>${project.recentActivity}</dd>
+            </div>
+          </dl>
+        `;
+        return article;
+      }
+
+      async function loadProjects() {
+        try {
+          const response = await fetch('project-data.json');
+          if (!response.ok) {
+            throw new Error(`Failed to load project data: ${response.status}`);
+          }
+
+          const data = await response.json();
+          const projects = Array.isArray(data.projects) ? data.projects : [];
+
+          projectGrid.innerHTML = '';
+
+          if (!projects.length) {
+            dataState.textContent = 'No project data is available right now.';
+            return;
+          }
+
+          projectCount.textContent = String(projects.length);
+          projects.forEach((project) => projectGrid.appendChild(createProjectCard(project)));
+          dataState.textContent = '';
+        } catch (error) {
+          projectGrid.innerHTML = '';
+          dataState.textContent = 'Unable to load project data. Please refresh the page.';
+          dataState.setAttribute('aria-live', 'assertive');
+          console.error(error);
+        }
+      }
+
+      loadProjects();
+    </script>
+  </body>
+</html>

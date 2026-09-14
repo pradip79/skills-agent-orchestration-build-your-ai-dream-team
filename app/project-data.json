@@ -1,0 +1,39 @@
+{
+  "projects": [
+    {
+      "name": "Atlas UI Refresh",
+      "owner": "Design Systems",
+      "status": "On track",
+      "recentActivity": "Completed the navigation redesign and finished the final accessibility pass for onboarding screens.",
+      "priority": "High"
+    },
+    {
+      "name": "Ops Console",
+      "owner": "Platform",
+      "status": "Needs review",
+      "recentActivity": "Integrated the incident timeline and is awaiting stakeholder feedback on the alert grouping model.",
+      "priority": "Medium"
+    },
+    {
+      "name": "Recruiting Portal",
+      "owner": "People Ops",
+      "status": "At risk",
+      "recentActivity": "Candidate intake is behind schedule because the application form needs a final API validation fix.",
+      "priority": "High"
+    },
+    {
+      "name": "Customer Insights",
+      "owner": "Growth",
+      "status": "On track",
+      "recentActivity": "Released a new cohort view and started validating the executive summary dashboard metrics.",
+      "priority": "Medium"
+    },
+    {
+      "name": "Field Service Mobile",
+      "owner": "Service Delivery",
+      "status": "Stable",
+      "recentActivity": "Pushed a release candidate with improved offline sync and resolved the last tablet crash reports.",
+      "priority": "Low"
+    }
+  ]
+}
